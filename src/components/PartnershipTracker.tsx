@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import {
   Download,
   Plus,
@@ -11,6 +12,7 @@ import {
   Save,
   Copy,
   Check,
+  LogOut,
 } from "lucide-react";
 
 interface Partner {
@@ -53,7 +55,15 @@ const defaultPartners: Partner[] = [
   { id: 5, name: "James Warner", contribution: 0 },
 ];
 
-const PartnershipTracker: React.FC = () => {
+interface PartnershipTrackerProps {
+  loggedInPartner: string;
+  onLogout: () => void;
+}
+
+const PartnershipTracker: React.FC<PartnershipTrackerProps> = ({
+  loggedInPartner,
+  onLogout,
+}) => {
   const [partners, setPartners] = useState<Partner[]>(defaultPartners);
   const [periods, setPeriods] = useState<Period[]>([]);
   const [saveStatus, setSaveStatus] = useState<string>("");
@@ -245,8 +255,13 @@ const PartnershipTracker: React.FC = () => {
         <div className="mb-8 border-b-2 border-black pb-4">
           <div className="flex justify-between items-start flex-wrap gap-4">
             <div className="flex items-center gap-5">
-              <div className="w-20 h-20 border-2 border-black flex items-center justify-center bg-white">
-                <span className="font-bold text-2xl">CBC</span>
+              <div className="w-20 h-20 border-2 border-black flex items-center justify-center bg-white relative overflow-hidden">
+                <Image
+                  src="/cbc_logo.png"
+                  alt="CBC Logo"
+                  fill
+                  className="object-contain p-1"
+                />
               </div>
               <div>
                 <h1 className="text-4xl font-bold text-black mb-2">
@@ -257,12 +272,27 @@ const PartnershipTracker: React.FC = () => {
                 </p>
               </div>
             </div>
-            {saveStatus && (
-              <div className="flex items-center gap-2 bg-gray-100 border-2 border-black text-black px-4 py-2">
-                <Save size={16} />
-                <span className="text-sm font-medium">{saveStatus}</span>
+            <div className="flex items-center gap-4">
+              <div className="text-right">
+                <p className="text-sm text-gray-500">Logged in as</p>
+                <p className="font-semibold text-black">
+                  Welcome, {loggedInPartner}!
+                </p>
               </div>
-            )}
+              <button
+                onClick={onLogout}
+                className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 border-2 border-black text-black px-4 py-2 font-medium transition-colors cursor-pointer"
+              >
+                <LogOut size={16} />
+                Logout
+              </button>
+              {saveStatus && (
+                <div className="flex items-center gap-2 bg-gray-100 border-2 border-black text-black px-4 py-2">
+                  <Save size={16} />
+                  <span className="text-sm font-medium">{saveStatus}</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
